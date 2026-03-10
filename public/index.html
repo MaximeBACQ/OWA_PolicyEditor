@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exchange OWA Policy Manager</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="/app.css" />
+</head>
+<body>
+
+  <!-- ── App shell ─────────────────────────────────────────── -->
+  <header class="app-header">
+    <div class="app-title">Exchange OWA Policy Manager</div>
+    <div id="status-badge" class="status-badge status-disconnected">● Disconnected</div>
+  </header>
+
+  <main class="app-main">
+
+    <!-- ── Screen: Connect ──────────────────────────────────── -->
+    <section id="screen-connect" class="screen">
+      <article class="connect-card">
+        <h2>Sign in to Exchange Online</h2>
+        <p class="hint">A browser window will open for Microsoft OAuth / MFA after you click Connect.</p>
+        <form id="form-connect">
+          <label for="input-upn">Admin UPN</label>
+          <input id="input-upn" type="email" placeholder="admin@tenant.onmicrosoft.com" autocomplete="username" required />
+          <div id="connect-error" class="error-msg" hidden></div>
+          <button type="submit" id="btn-connect">Connect</button>
+        </form>
+      </article>
+    </section>
+
+    <!-- ── Screen: Policy List ──────────────────────────────── -->
+    <section id="screen-policies" class="screen" hidden>
+      <div class="screen-toolbar">
+        <h2>OWA Mailbox Policies</h2>
+        <div class="toolbar-actions">
+          <button id="btn-new-policy" class="secondary">+ New Policy</button>
+          <button id="btn-goto-users" class="outline">Users</button>
+          <button id="btn-goto-log" class="outline">Change Log</button>
+          <button id="btn-disconnect" class="outline contrast">Disconnect</button>
+        </div>
+      </div>
+      <div id="policies-error" class="error-msg" hidden></div>
+      <div id="policies-loading" class="loading-msg">Loading policies…</div>
+      <table id="policies-table" hidden>
+        <thead>
+          <tr>
+            <th>Policy Name</th>
+            <th>Users</th>
+            <th>Default</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="policies-tbody"></tbody>
+      </table>
+    </section>
+
+    <!-- ── Screen: Policy Editor ────────────────────────────── -->
+    <section id="screen-editor" class="screen" hidden>
+      <div class="screen-toolbar">
+        <div class="breadcrumb">
+          <button id="btn-editor-back" class="outline">← Policies</button>
+          <h2 id="editor-policy-name">Policy Editor</h2>
+        </div>
+        <div class="toolbar-actions">
+          <span id="editor-change-count" class="change-badge" hidden></span>
+          <button id="btn-save" disabled>Save Changes</button>
+        </div>
+      </div>
+      <div id="editor-error" class="error-msg" hidden></div>
+      <div id="editor-loading" class="loading-msg">Loading parameters…</div>
+      <div id="editor-grid" class="editor-grid" hidden>
+        <div class="editor-col">
+          <div class="col-header col-true">✅ TRUE <span id="count-true" class="col-count"></span></div>
+          <div id="col-true-items" class="col-items"></div>
+        </div>
+        <div class="editor-col">
+          <div class="col-header col-false">❌ FALSE <span id="count-false" class="col-count"></span></div>
+          <div id="col-false-items" class="col-items"></div>
+        </div>
+        <div class="editor-col">
+          <div class="col-header col-notset">⬜ NOT SET <span id="count-notset" class="col-count"></span></div>
+          <div id="col-notset-items" class="col-items"></div>
+        </div>
+        <div class="editor-col">
+          <div class="col-header col-values">📝 VALUES <span id="count-values" class="col-count"></span></div>
+          <div id="col-values-items" class="col-items"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Screen: Users ────────────────────────────────────── -->
+    <section id="screen-users" class="screen" hidden>
+      <div class="screen-toolbar">
+        <div class="breadcrumb">
+          <button id="btn-users-back" class="outline">← Policies</button>
+          <h2>Users</h2>
+        </div>
+        <input id="user-search" type="search" placeholder="Filter by name or email…" />
+      </div>
+      <div id="users-error" class="error-msg" hidden></div>
+      <div id="users-loading" class="loading-msg">Loading users…</div>
+      <table id="users-table" hidden>
+        <thead>
+          <tr>
+            <th>Display Name</th>
+            <th>Email</th>
+            <th>Current Policy</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="users-tbody"></tbody>
+      </table>
+    </section>
+
+    <!-- ── Screen: Log ──────────────────────────────────────── -->
+    <section id="screen-log" class="screen" hidden>
+      <div class="screen-toolbar">
+        <div class="breadcrumb">
+          <button id="btn-log-back" class="outline">← Policies</button>
+          <h2>Change Log</h2>
+        </div>
+      </div>
+      <div id="log-error" class="error-msg" hidden></div>
+      <div id="log-loading" class="loading-msg">Loading log…</div>
+      <pre id="log-content" class="log-pre" hidden></pre>
+    </section>
+
+  </main>
+
+  <!-- ── Dialog: Save confirmation ────────────────────────────── -->
+  <dialog id="dialog-save">
+    <article>
+      <header>
+        <h3>Confirm Changes</h3>
+      </header>
+      <p id="dialog-save-summary"></p>
+      <table id="dialog-save-table">
+        <thead>
+          <tr><th>Parameter</th><th>Old Value</th><th></th><th>New Value</th></tr>
+        </thead>
+        <tbody id="dialog-save-tbody"></tbody>
+      </table>
+      <footer>
+        <button id="btn-dialog-cancel" class="outline">Cancel</button>
+        <button id="btn-dialog-confirm">Apply to Exchange Online</button>
+      </footer>
+    </article>
+  </dialog>
+
+  <!-- ── Dialog: Assign policy to user ────────────────────────── -->
+  <dialog id="dialog-assign">
+    <article>
+      <header>
+        <h3>Assign Policy</h3>
+      </header>
+      <p id="dialog-assign-user"></p>
+      <label for="dialog-policy-select">Select policy</label>
+      <select id="dialog-policy-select"></select>
+      <footer>
+        <button id="btn-assign-cancel" class="outline">Cancel</button>
+        <button id="btn-assign-confirm">Assign</button>
+      </footer>
+    </article>
+  </dialog>
+
+  <!-- ── Dialog: Create new policy ─────────────────────────────── -->
+  <dialog id="dialog-new-policy">
+    <article>
+      <header>
+        <h3>New OWA Mailbox Policy</h3>
+      </header>
+      <label for="input-new-policy-name">Policy name</label>
+      <input id="input-new-policy-name" type="text" placeholder="e.g. Restricted-OWA" />
+      <div id="new-policy-error" class="error-msg" hidden></div>
+      <footer>
+        <button id="btn-new-policy-cancel" class="outline">Cancel</button>
+        <button id="btn-new-policy-confirm">Create</button>
+      </footer>
+    </article>
+  </dialog>
+
+  <script src="/app.js"></script>
+</body>
+</html>

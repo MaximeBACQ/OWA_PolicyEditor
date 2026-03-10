@@ -1,0 +1,325 @@
+/* ============================================================
+   app.css — Overrides on top of Pico CSS dark theme
+   Only covers what Pico doesn't: editor grid, value colors,
+   modified-param highlight, status badge, log coloring.
+   ============================================================ */
+
+/* ── App shell ─────────────────────────────────────────────── */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--pico-muted-border-color);
+  background: var(--pico-card-background-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.app-title {
+  font-weight: bold;
+  font-size: 1rem;
+  color: var(--pico-primary);
+}
+
+.app-main {
+  padding: 1.5rem;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* ── Connection status badge ────────────────────────────────── */
+.status-badge {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-weight: 500;
+}
+
+.status-connected {
+  background: rgba(0, 200, 100, 0.15);
+  color: #4caf82;
+  border: 1px solid #4caf82;
+}
+
+.status-disconnected {
+  background: rgba(200, 60, 60, 0.15);
+  color: #e05252;
+  border: 1px solid #e05252;
+}
+
+/* ── Screen layout ──────────────────────────────────────────── */
+.screen-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.screen-toolbar h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.breadcrumb button {
+  margin: 0;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.85rem;
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.toolbar-actions button {
+  margin: 0;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+/* ── Connect screen ─────────────────────────────────────────── */
+.connect-card {
+  max-width: 420px;
+  margin: 4rem auto;
+}
+
+/* ── Error / loading messages ───────────────────────────────── */
+.error-msg {
+  color: var(--pico-del-color);
+  background: rgba(200, 60, 60, 0.1);
+  border: 1px solid rgba(200, 60, 60, 0.3);
+  border-radius: var(--pico-border-radius);
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.loading-msg {
+  color: var(--pico-muted-color);
+  font-style: italic;
+  padding: 1rem 0;
+}
+
+.hint {
+  color: var(--pico-muted-color);
+  font-size: 0.88rem;
+}
+
+/* ── Unsaved changes badge ──────────────────────────────────── */
+.change-badge {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.4);
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* ── Policy table ───────────────────────────────────────────── */
+.default-badge {
+  background: rgba(33, 150, 243, 0.15);
+  color: #64b5f6;
+  border: 1px solid rgba(33, 150, 243, 0.3);
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+/* ── 4-column editor grid ───────────────────────────────────── */
+/* Pico has no concept of this layout — entirely custom */
+.editor-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: var(--pico-border-radius);
+  overflow: hidden;
+}
+
+.editor-col {
+  border-right: 1px solid var(--pico-muted-border-color);
+  min-width: 0; /* allow columns to shrink */
+}
+
+.editor-col:last-child {
+  border-right: none;
+}
+
+.col-header {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: bold;
+  border-bottom: 1px solid var(--pico-muted-border-color);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--pico-card-sectioning-background-color);
+}
+
+.col-true   { color: #4caf82; }
+.col-false  { color: #e05252; }
+.col-notset { color: #ffc107; }
+.col-values { color: #64b5f6; }
+
+.col-count {
+  color: var(--pico-muted-color);
+  font-weight: normal;
+  font-size: 0.75rem;
+}
+
+.col-items {
+  overflow-y: auto;
+  max-height: calc(100vh - 220px);
+}
+
+/* ── Individual param rows in the editor ────────────────────── */
+.param-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.5rem;
+  border-bottom: 1px solid var(--pico-muted-border-color);
+  font-size: 0.82rem;
+  min-height: 2rem;
+  /* Left border shows modification state — default transparent */
+  border-left: 3px solid transparent;
+  transition: background 0.1s;
+}
+
+.param-row:last-child {
+  border-bottom: none;
+}
+
+.param-row:hover {
+  background: var(--pico-card-sectioning-background-color);
+}
+
+/* Yellow left border when the param has a pending (unsaved) change */
+.param-row.modified {
+  border-left-color: #ffc107;
+  background: rgba(255, 193, 7, 0.05);
+}
+
+.param-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--pico-color);
+}
+
+.param-name.has-value {
+  /* VALUES column: show name=value style, slightly dimmer name */
+  color: var(--pico-muted-color);
+}
+
+/* Value color coding — green/red/gray for true/false/null */
+.val-true  { color: #4caf82; font-size: 0.78rem; }
+.val-false { color: #e05252; font-size: 0.78rem; }
+.val-null  { color: var(--pico-muted-color); font-size: 0.78rem; font-style: italic; }
+.val-str   { color: #64b5f6; font-size: 0.78rem; }
+
+/* Compact checkbox — Pico's default checkbox is too tall */
+.param-row input[type="checkbox"] {
+  margin: 0;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+/* Inline text input in VALUES column */
+.param-row input[type="text"] {
+  flex: 1;
+  margin: 0;
+  padding: 0.1rem 0.3rem;
+  font-size: 0.8rem;
+  height: 1.6rem;
+  min-width: 0;
+}
+
+/* NOT SET column: show small action buttons */
+.param-row .null-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.param-row .null-actions button {
+  margin: 0;
+  padding: 0.1rem 0.4rem;
+  font-size: 0.72rem;
+  height: 1.5rem;
+  line-height: 1;
+}
+
+/* ── Save dialog table ──────────────────────────────────────── */
+#dialog-save-table td:nth-child(3) {
+  color: var(--pico-muted-color);
+  padding: 0 0.3rem;
+}
+
+.diff-old { color: #e05252; text-decoration: line-through; }
+.diff-new { color: #4caf82; }
+.diff-arrow { color: var(--pico-muted-color); }
+
+/* ── Users search ───────────────────────────────────────────── */
+#user-search {
+  max-width: 280px;
+  margin: 0;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.88rem;
+  height: auto;
+}
+
+/* ── Log viewer ─────────────────────────────────────────────── */
+.log-pre {
+  font-family: monospace;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  padding: 1rem;
+  background: var(--pico-card-background-color);
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: var(--pico-border-radius);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.log-ts   { color: #64b5f6; }   /* [timestamp] lines */
+.log-diff { color: #ffc107; }   /* lines containing -> */
+.log-dim  { color: var(--pico-muted-color); } /* blank / separator lines */
+
+/* ── Responsive: collapse to 2-col on narrow screens ────────── */
+@media (max-width: 900px) {
+  .editor-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .editor-col:nth-child(2) {
+    border-right: none;
+  }
+  .editor-col:nth-child(3) {
+    border-top: 1px solid var(--pico-muted-border-color);
+  }
+}
+
+@media (max-width: 540px) {
+  .editor-grid {
+    grid-template-columns: 1fr;
+  }
+  .editor-col { border-right: none; border-top: 1px solid var(--pico-muted-border-color); }
+  .editor-col:first-child { border-top: none; }
+}
