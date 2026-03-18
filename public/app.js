@@ -189,6 +189,7 @@ function renderEditorCol(containerId, entries, colType) {
       row.innerHTML = `
         <input type="checkbox" ${checked ? 'checked' : ''} data-param="${escAttr(entry.name)}" />
         <span class="param-name">${escHtml(entry.name)}</span>
+        <button class="param-help" data-param="${escAttr(entry.name)}">?</button>
       `;
     } else if (colType === 'notset') {
       // Null params: show name + small buttons to set true/false/text
@@ -202,6 +203,7 @@ function renderEditorCol(containerId, entries, colType) {
       row.innerHTML = `
         <span class="param-name"><span class="val-null">(null)</span> ${escHtml(entry.name)}</span>
         <span class="null-actions">${boolButtons}</span>
+        <button class="param-help" data-param="${escAttr(entry.name)}">?</button>
       `;
     } else {
       // VALUES column: show inline text input
@@ -209,10 +211,12 @@ function renderEditorCol(containerId, entries, colType) {
         ? entry.value.join(', ')
         : String(entry.value ?? '');
       row.innerHTML = `
+        <span class="param-name">${escHtml(entry.name)}</span>
         <input type="text" value="${escAttr(displayVal)}"
                data-param="${escAttr(entry.name)}"
                data-original="${escAttr(displayVal)}"
                title="${escAttr(entry.name)}" />
+        <button class="param-help" data-param="${escAttr(entry.name)}">?</button>
       `;
     }
 
@@ -495,6 +499,24 @@ document.getElementById('btn-new-policy-confirm').addEventListener('click', asyn
   } finally {
     btn.disabled = false;
   }
+});
+
+// ── Documentation Helper ─────────────────────────────────────────
+document.getElementById('editor-grid').addEventListener('click', (e) => {
+  const helpBtn = e.target.closest('.param-help');
+  if (!helpBtn) return;
+  
+  const paramName = helpBtn.dataset.param;
+  const anchor = '#-' + paramName.toLowerCase();
+  const url = 'https://learn.microsoft.com/en-us/powershell/module/exchangepowershell/set-owamailboxpolicy?view=exchange-ps' + anchor;
+  
+  document.getElementById('param-info-name').textContent = paramName;
+  document.getElementById('param-info-link').href = url;
+  document.getElementById('param-info-bar').hidden = false;
+});
+
+document.getElementById('param-info-close').addEventListener('click', () => {
+  document.getElementById('param-info-bar').hidden = true;
 });
 
 // ── Editor navigation ─────────────────────────────────────────

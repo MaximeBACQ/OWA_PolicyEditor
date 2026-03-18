@@ -323,3 +323,27 @@
   .editor-col { border-right: none; border-top: 1px solid var(--pico-muted-border-color); }
   .editor-col:first-child { border-top: none; }
 }
+
+.param-help {
+  margin: 0;
+  padding: 0 0.35rem;
+  font-size: 0.7rem;
+  height: 1.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+  opacity: 0.5;
+  background: transparent;
+  border: 3px solid #4B0082;
+}
+
+#param-info-close {
+  margin: 0;
+  padding: 0 0.35rem;
+  font-size: 0.7rem;
+  height: 1.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+  opacity: 0.5;
+  background: transparent;
+  border: 3px solid #4B0082;
+}
